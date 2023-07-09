@@ -1,0 +1,1 @@
+exec gunicorn www.asgi:application --bind 0.0.0.0:8000 --workers 1 -k uvicorn.workers.UvicornWorker --access-logfile - --capture-output --enable-stdio-inheritance

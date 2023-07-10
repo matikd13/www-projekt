@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+WEBSOCKET_AUTH_TOKEN = 'test'
 
 # Application definition
 
@@ -37,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # our packages
+    'www.conference_rooms',
+    # 3-th party
+    'channels',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

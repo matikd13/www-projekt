@@ -43,6 +43,11 @@ INSTALLED_APPS = [
     # 3-th party
     'channels',
     'django_extensions',
+    # our models
+    # 'www.Conference_room',
+    # 'www.Device',
+    # 'www.Reservation',
+
 ]
 
 MIDDLEWARE = [

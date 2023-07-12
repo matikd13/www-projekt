@@ -8,8 +8,8 @@ from django_extensions.db.models import TimeStampedModel
 class Device(TimeStampedModel):
     mac_address = models.CharField(max_length=17, default='', blank=True)
 
-    # TODO: add relation to conference room one to one
-    # room = models.OneToOneField(Conference_Room, on_delete=models.CASCADE, null=True, blank=True)
+    room = models.OneToOneField('Conference_Room', on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return self.mac_address
 
@@ -23,11 +23,6 @@ class Conference_Room(TimeStampedModel):
     temperature = models.FloatField(default=0, blank=True)
     humidity = models.FloatField(default=0, blank=True)
 
-    # TODO: add relation to device one to one
-    # device = models.OneToOneField(Device, on_delete=models.CASCADE, null=True, blank=True)
-
-    # TODO: add relation to reservation many conference rooms to one reservation (many to one)
-    # reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return self.name + ' ' + str(self.temperature) + ' ' + str(self.humidity)
 
@@ -45,12 +40,12 @@ class Conference_Room(TimeStampedModel):
 
 
 class Reservation(TimeStampedModel):
-    start_timedata = models.DateTimeField()
-    end_timedata = models.DateTimeField()
-    author = models.CharField(max_length=100, default='Author', blank=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
 
-    # TODO: add relation to conference room one reservation to many rooms (many to one)
-    # room = models.ForeignKey(Conference_Room, on_delete=models.CASCADE, null=True, blank=True)
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    conference_room = models.ForeignKey('ConferenceRoom', on_delete=models.CASCADE, related_name='reservations')
+
     def __str__(self):
         return self.author + ' ' + str(self.start_timedata) + ' ' + str(self.end_timedata)
 

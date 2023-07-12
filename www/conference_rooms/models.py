@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
+from datetime import timezone
 
 
 class Device(TimeStampedModel):
@@ -26,17 +27,26 @@ class Conference_Room(TimeStampedModel):
     def __str__(self):
         return self.name + ' ' + str(self.temperature) + ' ' + str(self.humidity)
 
-    @property
-    def occupied(self) -> bool:
-        return hasattr(self, 'device')
+    # @property
+    # def occupied(self) -> bool:
+    #     return hasattr(self, 'device')
 
+    # sprawdza czy aktualny czas mieści się w przedziale czasowym rezerwacji, może lepsze niż to wyżej.
+    @property
+    def occupied(self):
+        now = timezone.now()
+        return self.reservations.filter(start_time__lte=now, end_time__gte=now).exists()
+
+    # czy to jest potrzebne? skoro occupied będzie miało taką samą wartość jak reserved_now?
     @property
     def reserved_now(self) -> bool:
         return hasattr(self, 'reservation')
 
+    # sprawdza czy będzie rezerwacja w ciągu godziny
     @property
-    def reserved_soon(self) -> bool:
-        return hasattr(self, 'soon_reservation')
+    def reserved_soon(self):
+        in_one_hour = timezone.now() + timezone.timedelta(hours=1)
+        return self.reservations.filter(start_time__lte=in_one_hour).exists()
 
 
 class Reservation(TimeStampedModel):

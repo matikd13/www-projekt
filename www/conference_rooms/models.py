@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.db import models
 
 # Create your models here.
@@ -26,17 +28,27 @@ class ConferenceRoom(TimeStampedModel):
     def __str__(self):
         return self.name + ' ' + str(self.temperature) + ' ' + str(self.humidity)
 
+    # @property
+    # def occupied(self) -> bool:
+    #     return hasattr(self, 'device')
+
     @property
-    def occupied(self) -> bool:
-        return hasattr(self, 'device')
+    def occupied(self):
+        now = timezone.now()
+        return self.reservations.filter(start_time__lte=now, end_time__gte=now).exists()
 
     @property
     def reserved_now(self) -> bool:
         return hasattr(self, 'reservation')
 
+    # @property
+    # def reserved_soon(self) -> bool:
+    #     return hasattr(self, 'soon_reservation')
+
     @property
-    def reserved_soon(self) -> bool:
-        return hasattr(self, 'soon_reservation')
+    def reserved_soon(self):
+        in_one_hour = timezone.now() + timezone.timedelta(hours=1)
+        return self.reservations.filter(start_time__lte=in_one_hour).exists()
 
 
 class Reservation(TimeStampedModel):

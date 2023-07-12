@@ -1,16 +1,14 @@
-from datetime import timezone
-
-from django.db import models
-
 # Create your models here.
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
+from datetime import timezone
 
 
 class Device(TimeStampedModel):
     mac_address = models.CharField(max_length=17, default='', blank=True)
 
-    conference_room = models.OneToOneField('conferenceroom', on_delete=models.CASCADE, related_name='device', null=True, blank=True)
+    conference_room = models.OneToOneField('conferenceroom', on_delete=models.CASCADE, related_name='device', null=True,
+                                           blank=True)
 
     def __str__(self):
         return self.mac_address
@@ -26,7 +24,7 @@ class ConferenceRoom(TimeStampedModel):
     humidity = models.FloatField(default=0, blank=True)
 
     def __str__(self):
-        return self.name + ' ' + str(self.temperature) + ' ' + str(self.humidity)
+        return self.name
 
     # @property
     # def occupied(self) -> bool:
@@ -59,4 +57,3 @@ class Reservation(TimeStampedModel):
 
     def __str__(self):
         return self.author + ' ' + str(self.start_timedata) + ' ' + str(self.end_timedata)
-

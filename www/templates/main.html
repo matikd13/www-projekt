@@ -16,6 +16,9 @@
           color: red;
       }
       .reserved {
+          color: darkorange;
+      }
+      .reserved_soon {
           color: orange;
       }
 
@@ -105,13 +108,6 @@
                 <b>Sala B3</b> <br><span id="room11-status" class="room-status free">wolna</span></div>
         </div>
       </div>
-
-        <div class="col-md-6 reservations-list">
-          <h2>Last 5 Reservations</h2>
-          {% for reservation in reservations|slice:":5" %}
-            <p>{{ reservation }}</p>
-          {% endfor %}
-        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
@@ -125,20 +121,22 @@
         .then(data => {
           data.forEach(room => {
             const roomStatusSpan = document.querySelector(`#room${room.room_id}-status`);
-            roomStatusSpan.classList.remove('free', 'occupied', 'reserved');
+            roomStatusSpan.classList.remove('free', 'occupied', 'reserved_soon', 'reserved');
             roomStatusSpan.classList.add(room.status);
 
             if (room.status === "free") {
               roomStatusSpan.textContent = "wolna";
             } else if (room.status === "occupied") {
               roomStatusSpan.textContent = "zajęta";
+            } else if (room.status === "reserved_soon") {
+              roomStatusSpan.textContent = "zarezerwowana wkrótce";
             } else {
               roomStatusSpan.textContent = "zarezerwowana";
             }
           });
         });
     }
-
+    updateRoomStatus();
     setInterval(updateRoomStatus, 5000);
     </script>
   </body>

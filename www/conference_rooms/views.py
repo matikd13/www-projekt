@@ -8,6 +8,8 @@ from .forms import ReservationForm
 from django.http import JsonResponse
 from .models import ConferenceRoom
 from django.shortcuts import get_object_or_404
+import json
+from django.http import HttpResponse
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -38,22 +40,15 @@ def room_status(request):
     room_statuses = []
 
     for room in rooms:
-        print(f"Checking room {room.id}")  # debug
-
-        status = 'free'
-        if room.occupied:
-            status = 'occupied'
-        elif room.reserved_soon:
-            status = 'reserved'
-
-        print(f"Room {room.id} status: {status}")  # debug
-
+        print(f"Room {room.id} status: {room.status}")  # debug
         room_statuses.append({
             "room_id": room.id,
-            "status": status,
+            "status": room.status,
         })
 
-    return JsonResponse(room_statuses, safe=False)
+    data = json.dumps(room_statuses, indent=4)
+    # return JsonResponse(room_statuses, safe=False)
+    return HttpResponse(data, content_type='application/json')
 
 
 def reserve_room(request, room_id):

@@ -7,19 +7,6 @@ from django.db import models
 from django_extensions.db.models import TimeStampedModel
 
 
-class Device(TimeStampedModel):
-    mac_address = models.CharField(max_length=17, default='', blank=True)
-
-    conference_room = models.OneToOneField('conferenceroom', on_delete=models.CASCADE, related_name='device', null=True, blank=True)
-
-    def __str__(self):
-        return self.mac_address
-
-    @property
-    def configured(self) -> bool:
-        return hasattr(self, 'room')
-
-
 class ConferenceRoom(TimeStampedModel):
     name = models.CharField(max_length=100, default='Name', blank=True)
     temperature = models.FloatField(default=0, blank=True)
@@ -51,12 +38,25 @@ class ConferenceRoom(TimeStampedModel):
         return self.reservations.filter(start_time__lte=in_one_hour).exists()
 
 
+class Device(TimeStampedModel):
+    mac_address = models.CharField(max_length=17, default='', blank=True)
+
+    conference_room = models.OneToOneField(ConferenceRoom, on_delete=models.CASCADE, related_name='device', null=True,
+                                           blank=True)
+
+    def __str__(self):
+        return self.mac_address
+
+    @property
+    def configured(self) -> bool:
+        return hasattr(self, 'room')
+
+
 class Reservation(TimeStampedModel):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    conference_room = models.ForeignKey('conferenceroom', on_delete=models.CASCADE, related_name='reservations')
+    conference_room = models.ForeignKey(ConferenceRoom, on_delete=models.CASCADE, related_name='reservations')
 
     def __str__(self):
         return self.author + ' ' + str(self.start_timedata) + ' ' + str(self.end_timedata)
-

@@ -1,13 +1,14 @@
 # Create your models here.
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
-from datetime import timezone
+from django.utils import timezone
 
 
 class ConferenceRoom(TimeStampedModel):
     name = models.CharField(max_length=100, default='Name', blank=True)
     temperature = models.FloatField(default=0, blank=True)
     humidity = models.FloatField(default=0, blank=True)
+    # is_occupied = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return self.name

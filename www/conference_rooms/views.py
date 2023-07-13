@@ -5,6 +5,9 @@ from rest_framework import viewsets
 from .models import Reservation, ConferenceRoom
 from .serializers import ReservationSerializer
 from .forms import ReservationForm
+from django.http import JsonResponse
+from .models import ConferenceRoom
+from django.shortcuts import get_object_or_404
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -15,7 +18,8 @@ class ReservationViewSet(viewsets.ModelViewSet):
 def main_view(request):
     reservations = Reservation.objects.all()
     grid_range = list(range(48))
-    return render(request, 'main.html', {'reservations': reservations, 'grid_range': grid_range})
+    rooms = ConferenceRoom.objects.all()
+    return render(request, 'main.html', {'reservations': reservations, 'grid_range': grid_range, 'rooms': rooms})
 
 
 def create_reservations(request):
@@ -27,6 +31,29 @@ def create_reservations(request):
     else:
         form = ReservationForm()
     return render(request, 'create_reservation.html', {'form': form})
+
+
+def room_status(request):
+    rooms = ConferenceRoom.objects.all()
+    room_statuses = []
+
+    for room in rooms:
+        print(f"Checking room {room.id}")  # debug
+
+        status = 'free'
+        if room.occupied:
+            status = 'occupied'
+        elif room.reserved_soon:
+            status = 'reserved'
+
+        print(f"Room {room.id} status: {status}")  # debug
+
+        room_statuses.append({
+            "room_id": room.id,
+            "status": status,
+        })
+
+    return JsonResponse(room_statuses, safe=False)
 
 
 def reserve_room(request, room_id):

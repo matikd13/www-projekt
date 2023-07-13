@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserve Room</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #212121;
+            padding: 50px;
+        }
+        .card {
+            width: 500px;
+        }
+        .card-header {
+            background-color: #212121;
+            color: white;
+        }
+        .card-body {
+            background-color: #333;
+            color: white;
+        }
+        form .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        form .form-group label {
+            margin-bottom: 0;
+        }
+        button {
+            width: 100%;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Reserve Room {{ room.name }}</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div style="display: flex;">
+                                {{ field }}
+                                {% if field.label == "Date" %}
+                                    <button type="button" id="btnNow" class="btn btn-secondary btn-sm ml-2">Now</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Create Reservation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $('#btnNow').click(function(){
+                var now = new Date();
+                var datetime = now.getFullYear()+'/'
+                    +(now.getMonth()+1)+'/'
+                    +now.getDate()+' '
+                    +now.getHours()+':'
+                    +(now.getMinutes()<10?'0':'')+now.getMinutes();
+                $(this).prev().val(datetime);
+            });
+        });
+    </script>
+</body>
+</html>

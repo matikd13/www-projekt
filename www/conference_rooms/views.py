@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
 from rest_framework import viewsets
-from .models import Reservation
+from .models import Reservation, ConferenceRoom
 from .serializers import ReservationSerializer
 from .forms import ReservationForm
 
@@ -27,3 +27,19 @@ def create_reservations(request):
     else:
         form = ReservationForm()
     return render(request, 'create_reservation.html', {'form': form})
+
+
+def reserve_room(request, room_id):
+    room = get_object_or_404(ConferenceRoom, id=room_id)
+    form = ReservationForm(initial={'conference_room': room})
+    form.fields['conference_room'].disabled = True
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.conference_room = room
+            reservation.save()
+            return redirect('main')
+    else:
+        form = ReservationForm()
+    return render(request, 'reserve_room.html', {'room': room, 'form': form})

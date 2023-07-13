@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class ConferenceRoom(TimeStampedModel):
-    name = models.CharField(max_length=100, default='Name', blank=True)
+    name = models.CharField(max_length=100, default='Name', blank=True, unique=True)
     temperature = models.FloatField(default=0, blank=True)
     humidity = models.FloatField(default=0, blank=True)
     is_occupied = models.BooleanField(default=False, blank=True)

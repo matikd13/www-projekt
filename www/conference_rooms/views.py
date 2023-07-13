@@ -56,15 +56,15 @@ def room_status(request):
 
 def reserve_room(request, room_name):
     room = get_object_or_404(ConferenceRoom, name=room_name)
-    form = ReservationForm(initial={'conference_room': room})
-    form.fields['conference_room'].disabled = True
     if request.method == 'POST':
-        form = ReservationForm(request.POST)
+        form = ReservationForm(request.POST, initial={'conference_room': room})
         if form.is_valid():
             reservation = form.save(commit=False)
             reservation.conference_room = room
             reservation.save()
             return redirect('main')
+        return render(request, 'reserve_room.html', {'room': room, 'form': form})
     else:
-        form = ReservationForm()
+        form = ReservationForm(initial={'conference_room': room})
+        form.fields['conference_room'].disabled = True
     return render(request, 'reserve_room.html', {'room': room, 'form': form})

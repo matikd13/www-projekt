@@ -21,3 +21,12 @@ class ReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
         fields = ['start_time', 'end_time', 'author', 'conference_room']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('start_time')
+        end_time = cleaned_data.get('end_time')
+
+        if start_time and end_time:
+            if start_time >= end_time:
+                raise forms.ValidationError("Start time cannot be later than end time.")

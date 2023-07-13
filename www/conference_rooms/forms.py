@@ -32,10 +32,19 @@ class ReservationForm(forms.ModelForm):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
+        conference_room = cleaned_data.get('conference_room')
 
-        if start_time and end_time:
-            if start_time >= end_time:
-                raise forms.ValidationError("Start time cannot be later than end time.")
+        if start_time and end_time and conference_room:
+            conflicting_reservations = Reservation.objects.filter(conference_room=conference_room,
+                                                                  start_time__lte=end_time,
+                                                                  end_time__gte=start_time,
+                                                                  ).exclude(
+                pk=self.instance.pk)  # Wyklucz bieżącą rezerwację, jeśli edytujemy
+            if conflicting_reservations:
+                raise forms.ValidationError("Ta sala jest już zarezerwowana w tym terminie.")
+
+        if start_time >= end_time:
+            raise forms.ValidationError("Czas rozpoczęcia musi być wcześniejszy niż czas zakończenia.")
 
         if start_time < timezone.now():
-            raise forms.ValidationError("Start time cannot be earlier than now.")
+            raise forms.ValidationError("Nie można zarezerwować sali w przeszłości.")

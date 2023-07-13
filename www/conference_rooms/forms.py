@@ -1,5 +1,6 @@
 from django import forms
-from .models import Reservation
+from .models import Reservation, ConferenceRoom
+from django.utils import timezone
 
 
 class ReservationForm(forms.ModelForm):
@@ -18,6 +19,11 @@ class ReservationForm(forms.ModelForm):
         })
     )
 
+    conference_room = forms.ModelChoiceField(queryset=ConferenceRoom.objects.all(), widget=forms.Select(attrs={
+        'class': 'form-control',
+        'id': 'id_author'  # Przypisanie identyfikatora 'id_author' do pola wyboru autora
+    }))
+
     class Meta:
         model = Reservation
         fields = ['start_time', 'end_time', 'author', 'conference_room']
@@ -30,3 +36,6 @@ class ReservationForm(forms.ModelForm):
         if start_time and end_time:
             if start_time >= end_time:
                 raise forms.ValidationError("Start time cannot be later than end time.")
+
+        if start_time < timezone.now():
+            raise forms.ValidationError("Start time cannot be earlier than now.")

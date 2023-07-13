@@ -1,3 +1,4 @@
+from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
 
 # Create your views here.
@@ -63,8 +64,10 @@ def reserve_room(request, room_name):
             reservation.conference_room = room
             reservation.save()
             return redirect('main')
-        return render(request, 'reserve_room.html', {'room': room, 'form': form})
     else:
         form = ReservationForm(initial={'conference_room': room})
-        form.fields['conference_room'].disabled = True
+        for field_name in form.fields:
+            form.fields[field_name].widget.attrs.update({
+                'class': 'form-control' + (' is-invalid' if form[field_name].errors else '')
+            })
     return render(request, 'reserve_room.html', {'room': room, 'form': form})

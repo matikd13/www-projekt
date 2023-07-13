@@ -1,4 +1,5 @@
-# Create your models here.
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from django.utils import timezone
@@ -54,6 +55,18 @@ class ConferenceRoom(TimeStampedModel):
     def occupied(self):
         now = timezone.now()
         return self.reservations.filter(start_time__lte=now, end_time__gte=now).exists()
+
+    def notify_device(self):
+        if self.device is None:
+            return
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            self.name,
+            {
+                'type': 'room.info',
+                'status': self.status,
+            },
+        )
 
 
 class Reservation(TimeStampedModel):

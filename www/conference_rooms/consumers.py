@@ -24,8 +24,6 @@ class DeviceConsumer(JsonWebsocketConsumer):
     def receive_json(self, content, *args):
         message_type = content.get('type')
 
-        print(content)
-
         if message_type == 'init':
             mac_address = content.get('mac_address')
             self.device, created = Device.objects.get_or_create(mac_address=mac_address)

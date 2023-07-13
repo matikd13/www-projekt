@@ -19,9 +19,11 @@ class ReservationViewSet(viewsets.ModelViewSet):
 
 def main_view(request):
     reservations = Reservation.objects.all()
-    grid_range = list(range(48))
     rooms = ConferenceRoom.objects.all()
-    return render(request, 'main.html', {'reservations': reservations, 'grid_range': grid_range, 'rooms': rooms})
+    names = []
+    for room in rooms:
+        names.append(room.name)
+    return render(request, 'main.html', {'reservations': reservations, 'rooms': rooms, 'names': names})
 
 
 def create_reservations(request):
@@ -36,23 +38,24 @@ def create_reservations(request):
 
 
 def room_status(request):
-    rooms = ConferenceRoom.objects.all()
+    rooms = ConferenceRoom.objects.all().order_by('id')
     room_statuses = []
 
-    for room in rooms:
+    for i, room in enumerate(rooms, start=1):
         print(f"Room {room.id} status: {room.status}")  # debug
         room_statuses.append({
-            "room_id": room.id,
+            "room_id_z_bazy": room.id,
+            "room_id": i,
+            "room_name": room.name,
             "status": room.status,
         })
 
     data = json.dumps(room_statuses, indent=4)
-    # return JsonResponse(room_statuses, safe=False)
     return HttpResponse(data, content_type='application/json')
 
 
-def reserve_room(request, room_id):
-    room = get_object_or_404(ConferenceRoom, id=room_id)
+def reserve_room(request, room_name):
+    room = get_object_or_404(ConferenceRoom, name=room_name)
     form = ReservationForm(initial={'conference_room': room})
     form.fields['conference_room'].disabled = True
     if request.method == 'POST':

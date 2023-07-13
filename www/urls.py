@@ -27,7 +27,7 @@ urlpatterns = [
     path('', main_view, name='main'),
     path('reservations/', create_reservations, name='create_reservations'),
     path('room_status/', room_status, name='room_status'),
-    path('reserve_room/<int:room_id>/', reserve_room, name='reserve_room'),
+    path('reserve_room/<str:room_name>/', reserve_room, name='reserve_room'),
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
 ]

@@ -50,6 +50,7 @@ def room_status(request):
             "room_name": room.name,
             "status": room.status,
         })
+        room.notify_device()
 
     data = json.dumps(room_statuses, indent=4)
     return HttpResponse(data, content_type='application/json')

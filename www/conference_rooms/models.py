@@ -1,7 +1,19 @@
-# Create your models here.
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from django.utils import timezone
+
+
+class Device(TimeStampedModel):
+    mac_address = models.CharField(max_length=17, default='', blank=True)
+
+    def __str__(self):
+        return self.mac_address
+
+    @property
+    def configured(self) -> bool:
+        return hasattr(self, 'room')
 
 
 class ConferenceRoom(TimeStampedModel):
@@ -9,6 +21,8 @@ class ConferenceRoom(TimeStampedModel):
     temperature = models.FloatField(default=0, blank=True)
     humidity = models.FloatField(default=0, blank=True)
     is_occupied = models.BooleanField(default=False, blank=True)
+
+    device = models.OneToOneField(Device, models.deletion.SET_NULL, null=True, blank=True, related_name='room')
 
     STATUS_CHOICES = [
         ('free', 'Free'),
@@ -42,19 +56,17 @@ class ConferenceRoom(TimeStampedModel):
         now = timezone.now()
         return self.reservations.filter(start_time__lte=now, end_time__gte=now).exists()
 
-
-class Device(TimeStampedModel):
-    mac_address = models.CharField(max_length=17, default='', blank=True)
-
-    conference_room = models.OneToOneField(ConferenceRoom, on_delete=models.CASCADE, related_name='device', null=True,
-                                           blank=True)
-
-    def __str__(self):
-        return self.mac_address
-
-    @property
-    def configured(self) -> bool:
-        return hasattr(self, 'room')
+    def notify_device(self):
+        if self.device is None:
+            return
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            self.name,
+            {
+                'type': 'room.info',
+                'status': self.status,
+            },
+        )
 
 
 class Reservation(TimeStampedModel):

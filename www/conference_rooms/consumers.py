@@ -32,8 +32,8 @@ class DeviceConsumer(JsonWebsocketConsumer):
 
         if self.device and self.device.configured:
             if message_type == 'presence':
-                self.device.room.occupied = content.get('presence', False)
-                self.device.room.save(update_fields=('occupied',))
+                self.device.room.is_occupied = content.get('presence', False)
+                self.device.room.save(update_fields=('is_occupied',))
             elif message_type == 'climate':
                 self.device.room.humidity = float(content.get('hum', 0))
                 self.device.room.temperature = float(content.get('temp', 0))

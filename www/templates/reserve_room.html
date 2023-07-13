@@ -39,6 +39,14 @@
         button {
             width: 100%;
         }
+        .is-invalid input {
+            border-color: #dc3545;
+        }
+        .is-invalid ~ .invalid-feedback {
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 12px;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
@@ -52,14 +60,19 @@
                 <form method="post">
                     {% csrf_token %}
                     {% for field in form %}
-                        <div class="form-group">
+                        <div class="form-group {% if field.errors %}is-invalid{% endif %}">
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             <div style="display: flex;">
                                 {{ field }}
-                                {% if field.label == "Date" %}
+                                {% if field.label == "Start Time" %}
                                     <button type="button" id="btnNow" class="btn btn-secondary btn-sm ml-2">Now</button>
                                 {% endif %}
                             </div>
+                            {% if field.errors %}
+                                <div class="invalid-feedback">
+                                    {{ field.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                     <button type="submit" class="btn btn-primary">Create Reservation</button>
@@ -72,9 +85,9 @@
         $(function () {
             $('#btnNow').click(function(){
                 var now = new Date();
-                var datetime = now.getFullYear()+'/'
-                    +(now.getMonth()+1)+'/'
-                    +now.getDate()+' '
+                var datetime = now.getFullYear()+'-'
+                    +(now.getMonth()+1)+'-'
+                    +now.getDate()+'T'
                     +now.getHours()+':'
                     +(now.getMinutes()<10?'0':'')+now.getMinutes();
                 $(this).prev().val(datetime);

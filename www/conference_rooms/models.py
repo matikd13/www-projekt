@@ -26,10 +26,6 @@ class ConferenceRoom(TimeStampedModel):
     def __str__(self):
         return self.name
 
-    # @property
-    # def occupied(self) -> bool:
-    #     return hasattr(self, 'device')
-
     @property
     def occupied(self):
         now = timezone.now()
@@ -38,10 +34,6 @@ class ConferenceRoom(TimeStampedModel):
     @property
     def reserved_now(self) -> bool:
         return hasattr(self, 'reservation')
-
-    # @property
-    # def reserved_soon(self) -> bool:
-    #     return hasattr(self, 'soon_reservation')
 
     @property
     def reserved_soon(self):
@@ -56,4 +48,4 @@ class Reservation(TimeStampedModel):
     conference_room = models.ForeignKey('conferenceroom', on_delete=models.CASCADE, related_name='reservations')
 
     def __str__(self):
-        return self.author + ' ' + str(self.start_timedata) + ' ' + str(self.end_timedata)
+        return f"{self.author} {self.start_time} {self.end_time}"

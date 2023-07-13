@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 5px; /* Mniejsze odstępy między kwadratami */
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+        padding: 70px; /* Więcej paddingu na górze, aby obniżyć siatkę */
+        max-width: 600px;
+      }
+      .grid-item {
+        background-color: white;
+        padding-bottom: 100%;
+      }
+      /* Dodanie marginesu na górze dla listy rezerwacji */
+      .reservations-list {
+        margin-top: 50px;
+      }
+    </style>
+
+    <title>MMM's Reservations</title>
+  </head>
+  <body style="background-color: #333; color: white;">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 text-center my-3">
+          <h1>MMM's Reservations ~ Mateusz & Maja & Mateusz</h1>
+        </div>
+        <div class="col-md-6">
+          <div class="grid-container">
+            {% for _ in grid_range %}
+              <div class="grid-item"></div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="col-md-6 reservations-list">
+          <h2>Last 5 Reservations</h2>
+          {% for reservation in reservations|slice:":5" %}
+            <p>{{ reservation }}</p>
+          {% endfor %}
+          <a href="{% url 'create_reservations' %}" class="btn btn-primary">Make a Reservation</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </body>
+</html>

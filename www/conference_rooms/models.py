@@ -3,6 +3,7 @@ from django.db import models
 from django_extensions.db.models import TimeStampedModel
 from datetime import timezone
 
+
 class ConferenceRoom(TimeStampedModel):
     name = models.CharField(max_length=100, default='Name', blank=True)
     temperature = models.FloatField(default=0, blank=True)

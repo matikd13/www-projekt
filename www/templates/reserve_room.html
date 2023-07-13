@@ -64,9 +64,6 @@
                             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             <div style="display: flex;">
                                 {{ field }}
-                                {% if field.label == "Start Time" %}
-                                    <button type="button" id="btnNow" class="btn btn-secondary btn-sm ml-2">Now</button>
-                                {% endif %}
                             </div>
                             {% if field.errors %}
                                 <div class="invalid-feedback">

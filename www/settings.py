@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-k78t$r2$mdoq5cz)q+^2n8joyv9lwv8udm1til+sdfh^qatxi5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 WEBSOCKET_AUTH_TOKEN = 'test'
 
@@ -52,6 +52,15 @@ INSTALLED_APPS = [
     # 'www.Reservation',
 
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://localhost:6379/0"],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

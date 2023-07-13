@@ -1,4 +1,4 @@
-exec pip install django gunicorn uvicorn psycopg2-binary channels django-extensions
+exec pip install django gunicorn uvicorn psycopg2-binary channels django-extensions 'uvicorn[standard]' channels_redis
 
 FILE_PATH="./db.sqlite3"
 

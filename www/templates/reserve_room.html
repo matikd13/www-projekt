@@ -75,7 +75,7 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h2>Reserve Room {{ room.name }}</h2>
+                <h2>Zrób rezerwację dla {{ room.name }}</h2>
             </div>
             <div class="card-body">
                 <form method="post">
@@ -109,20 +109,31 @@
                             W formularzu wystąpiły błędy. Sprawdź czy wszystkie pola są poprawnie wypełnione.
                         </div>
                     {% endif %}
-                    <button type="submit" class="btn btn-primary">Create Reservation</button>
+                    <button type="submit" class="btn btn-primary"> Zarezerwuj </button>
                 </form>
             </div>
         </div>
         <div class="card" style="margin-left:50px;">
             <div class="card-header">
-              <h2>Reservations for Selected Room</h2>
+              <h2>Lista rezerwacji {{ room.name }}</h2>
             </div>
             <div class="card-body">
-              {% for reservation in room.reservations.all %}
-                {% if reservation.end_time >= now %}
-                    <p>{{ reservation }}</p>
-                {% endif %}
-            {% endfor %}
+              {% for reservation in reservations %}
+                <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                    <div class="card-header">Rezerwacja numer: {{ reservation.id }}</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Autor: {{ reservation.author }}</h4>
+                        <p class="card-text">
+                            Początek: {{ reservation.start_time|date:"j F Y, G:i" }}<br>
+                            Koniec: {{ reservation.end_time|date:"j F Y, G:i" }}
+                        </p>
+                    </div>
+                </div>
+              {% empty %}
+                <div class="alert alert-warning" role="alert">
+                        Brak przyszłych rezerwacji dla tej sali.
+                </div>
+              {% endfor %}
             </div>
         </div>
     </div>

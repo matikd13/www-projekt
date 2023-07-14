@@ -68,9 +68,6 @@
             margin-top: 20px;
         }
 
-        .reservations-container {
-            margin-top: 20px;
-        }
     </style>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
@@ -78,54 +75,65 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h2>Reserve Room {{ room.name }}</h2>
+                <h2>Zrób rezerwację dla {{ room.name }}</h2>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="conference_room" value="{{ room.id }}">
-                            {% for field in form %}
-                                {% if field.name != 'conference_room' %}
-                                    <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                        <div style="display: flex;">
-                                            {{ field }}
-                                        </div>
-                                        {% for error in field.errors %}
-                                            <div class="alert alert-danger">
-                                                {{ error }}
-                                            </div>
-                                        {% endfor %}
-                                        <script>
-                                            document.getElementById("id_author").classList.add("form-control");
-                                        </script>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="conference_room" value="{{ room.id }}">
+                    {% for field in form %}
+                        {% if field.name != 'conference_room' %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <div style="display: flex;">
+                                    {{ field }}
+                                </div>
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ error }}
                                     </div>
-                                {% endif %}
-                            {% endfor %}
-                            {% if form.non_field_errors %}
-                                <div class="alert alert-danger">
-                                    {{ form.non_field_errors }}
-                                </div>
-                            {% endif %}
-                            {% if form.errors %}
-                                <div class="alert alert-danger">
-                                    W formularzu wystąpiły błędy. Sprawdź czy wszystkie pola są poprawnie wypełnione.
-                                </div>
-                            {% endif %}
-                            <button type="submit" class="btn btn-primary">Create Reservation</button>
-                        </form>
-                    </div>
-                    <div class="reservations-container">
-                        <h2>Reservations for Selected Room</h2>
-                        {% for reservation in room.reservations.all %}
-                            {% if reservation.end_time >= now %}
-                                <p>{{ reservation }}</p>
-                            {% endif %}
-                        {% endfor %}
+                                {% endfor %}
+                                <script>
+                                    document.getElementById("id_author").classList.add("form-control");
+                                </script>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            W formularzu wystąpiły błędy. Sprawdź czy wszystkie pola są poprawnie wypełnione.
+                        </div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary"> Zarezerwuj </button>
+                </form>
+            </div>
+        </div>
+        <div class="card" style="margin-left:50px;">
+            <div class="card-header">
+              <h2>Lista rezerwacji {{ room.name }}</h2>
+            </div>
+            <div class="card-body">
+              {% for reservation in reservations %}
+                <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                    <div class="card-header">Rezerwacja numer: {{ reservation.id }}</div>
+                    <div class="card-body">
+                        <h4 class="card-title">Autor: {{ reservation.author }}</h4>
+                        <p class="card-text">
+                            Początek: {{ reservation.start_time|date:"j F Y, G:i" }}<br>
+                            Koniec: {{ reservation.end_time|date:"j F Y, G:i" }}
+                        </p>
                     </div>
                 </div>
+              {% empty %}
+                <div class="alert alert-warning" role="alert">
+                        Brak przyszłych rezerwacji dla tej sali.
+                </div>
+              {% endfor %}
             </div>
         </div>
     </div>

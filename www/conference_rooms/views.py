@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
 from rest_framework import viewsets
 from .models import Reservation, ConferenceRoom
 from .serializers import ReservationSerializer
 from .forms import ReservationForm
 import json
 from django.http import HttpResponse
+from django.utils import timezone
+from django.contrib import messages
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -54,6 +55,14 @@ def room_status(request):
 def reserve_room(request, room_name):
     room = get_object_or_404(ConferenceRoom, name=room_name)
     reservations = room.reservations.filter(end_time__gt=timezone.now()).order_by('start_time')
+
+    if 'delete_reservation' in request.POST:
+        reservation_id = request.POST.get('reservation_id')
+        reservation = get_object_or_404(Reservation, id=reservation_id)
+        reservation.delete()
+        messages.success(request, "Rezerwacja została pomyślnie usunięta!")
+        return redirect('reserve_room', room_name=room_name)
+
     if request.method == 'POST':
         form = ReservationForm(request.POST, initial={'conference_room': room})
         if form.is_valid():

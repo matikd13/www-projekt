@@ -107,9 +107,13 @@
         </div>
 
         <div class="floor-plan">
-            {% for name in names %}
-            <div id="room{{ forloop.counter }}" class="room" onclick="location.href='/reserve_room/{{ name }}';">
-                <b>{{ name }}</b> <br><span id="room{{ forloop.counter }}-status" class="room-status free">wolna</span></div>
+            {% for room in rooms %}
+            <div id="room{{ forloop.counter }}" class="room" onclick="location.href='/reserve_room/{{ room.name }}';">
+                <b>{{ room.name }}</b> <br><span id="room{{ forloop.counter }}-status" class="room-status free">wolna</span>
+                <br/>
+            <span>Temperature: {{ room.temperature|floatformat:1 }}*C</span>
+            <span>Humidity: {{ room.humidity|floatformat:1 }}%</span>
+            </div>
             {% endfor %}
         </div>
       </div>

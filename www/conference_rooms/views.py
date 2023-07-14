@@ -17,10 +17,8 @@ class ReservationViewSet(viewsets.ModelViewSet):
 def main_view(request):
     reservations = Reservation.objects.all()
     rooms = ConferenceRoom.objects.all()
-    names = []
-    for room in rooms:
-        names.append(room.name)
-    return render(request, 'main.html', {'reservations': reservations, 'rooms': rooms, 'names': names})
+
+    return render(request, 'main.html', {'reservations': reservations, 'rooms': rooms})
 
 
 def create_reservations(request):

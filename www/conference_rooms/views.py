@@ -1,6 +1,6 @@
 from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.timezone import now
+from django.utils import timezone
 
 # Create your views here.
 from rest_framework import viewsets
@@ -59,6 +59,7 @@ def room_status(request):
 
 def reserve_room(request, room_name):
     room = get_object_or_404(ConferenceRoom, name=room_name)
+    now = timezone.now()
     if request.method == 'POST':
         form = ReservationForm(request.POST, initial={'conference_room': room})
         if form.is_valid():
@@ -72,4 +73,4 @@ def reserve_room(request, room_name):
             form.fields[field_name].widget.attrs.update({
                 'class': 'form-control' + (' is-invalid' if form[field_name].errors else '')
             })
-    return render(request, 'reserve_room.html', {'room': room, 'form': form})
+    return render(request, 'reserve_room.html', {'room': room, 'form': form, 'now': now})
